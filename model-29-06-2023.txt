@@ -1,0 +1,1488 @@
+series: focal
+applications:
+  ceph-mon:
+    charm: ceph-mon
+    channel: quincy/stable
+    revision: 109
+    num_units: 5
+    to:
+    - "3"
+    - "4"
+    - "5"
+    - "18"
+    - "44"
+    options:
+      ceph-cluster-network: 172.28.3.128/25
+      ceph-public-network: 172.28.3.0/25
+      expected-osd-count: 18
+      sysctl: '{ kernel.pid_max : 2097152, vm.max_map_count : 524288, kernel.threads-max:
+        2097152 }'
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: pxe
+      bootstrap-source: pxe
+      client: pxe
+      cluster: pxe
+      dashboard: storage-client
+      mds: pxe
+      mon: pxe
+      nrpe-external-master: pxe
+      osd: storage-cluster
+      prometheus: pxe
+      public: pxe
+      radosgw: pxe
+      rbd-mirror: pxe
+  ceph-osd-hdd-sda:
+    charm: ceph-osd
+    channel: quincy/stable
+    revision: 534
+    num_units: 15
+    to:
+    - "3"
+    - "4"
+    - "13"
+    - "14"
+    - "15"
+    - "16"
+    - "18"
+    - "44"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "10"
+    - "11"
+    options:
+      bluestore-block-db-size: 112206020608
+      bluestore-db: /dev/sda3
+      osd-devices: /dev/sde /dev/sdf
+      sysctl: ""
+    constraints: arch=amd64
+    storage:
+      bluestore-db: loop,1024M
+      bluestore-wal: loop,1024M
+      cache-devices: loop,10240M
+      osd-devices: loop,1024M
+      osd-journals: loop,1024M
+    bindings:
+      "": alpha
+      cluster: alpha
+      mon: alpha
+      nrpe-external-master: alpha
+      public: alpha
+      secrets-storage: alpha
+  ceph-osd-hdd-sdb:
+    charm: ceph-osd
+    channel: quincy/stable
+    revision: 534
+    num_units: 15
+    to:
+    - "3"
+    - "4"
+    - "13"
+    - "14"
+    - "15"
+    - "16"
+    - "18"
+    - "44"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "10"
+    - "11"
+    options:
+      bluestore-block-db-size: 112206020608
+      bluestore-db: /dev/sdb3
+      osd-devices: /dev/sdg /dev/sdh
+      sysctl: ""
+    constraints: arch=amd64
+    storage:
+      bluestore-db: loop,1024M
+      bluestore-wal: loop,1024M
+      cache-devices: loop,10240M
+      osd-devices: loop,1024M
+      osd-journals: loop,1024M
+    bindings:
+      "": alpha
+      cluster: alpha
+      mon: alpha
+      nrpe-external-master: alpha
+      public: alpha
+      secrets-storage: alpha
+  ceph-osd-ssd:
+    charm: ceph-osd
+    channel: quincy/stable
+    revision: 534
+    num_units: 15
+    to:
+    - "3"
+    - "4"
+    - "13"
+    - "14"
+    - "15"
+    - "16"
+    - "18"
+    - "44"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "10"
+    - "11"
+    options:
+      ceph-cluster-network: 172.28.3.128/25
+      ceph-public-network: 172.28.3.0/25
+      config-flags: |-
+        {
+          global: {
+              "debug lockdep": 0/0, "debug context": 0/0, "debug crush": 0/0, "debug buffer": 0/0,
+              "debug timer": 0/0, "debug filer": 0/0, "debug objecter": 0/0, "debug rados": 0/0,
+              "debug rbd": 0/0, "debug journaler": 0/0, "debug objectcatcher": 0/0, "debug client": 0/0,
+              "debug optracker": 0/0, "debug objclass": 0/0, "debug filestore": 0/0,
+              "debug journal": 0/0, "debug ms": 0/0, "debug monc": 0/0, "debug tp": 0/0,
+              "debug auth": 0/0, "debug finisher": 0/0, "debug heartbeatmap": 0/0, "debug perfcounter": 0/0,
+              "debug asok": 0/0, "debug throttle": 0/0, "debug mon": 0/0, "debug paxos": 0/0,
+              "debug rgw": 0/0,
+              "osd pg bits": 8,
+              "osd pgp bits": 8,
+              "perf": true,
+              "mutex perf counter": true,
+              "throttler perf counter": false,
+              "mon max pg per osd": 800
+          },
+          osd: {
+              "osd client message size cap": 2147483648,
+              "osd map cache size": 1024,
+              "osd map cache bl size": 128,
+              "osd enable op tracker": false,
+              "osd memory target": 17179869184,
+              "mds cache memory limit": 2147483648,
+              "bluestore cache size hdd": 8G,
+              "bluestore cache size ssd": 8G,
+              "osd max write size": 512,
+              "osd journal size": 20000,
+              "bluestore rocksdb options": "compression=kNoCompression,max_write_buffer_number=64,min_write_buffer_number_to_merge=32,recycle_log_file_num=64,compaction_style=kCompactionStyleLevel,write_buffer_size=67108864,target_file_size_base=67108864,max_background_compactions=64,level0_file_num_compaction_trigger=64,level0_slowdown_writes_trigger=128,level0_stop_writes_trigger=128,max_bytes_for_level_base=6GB,compaction_threads=32,max_bytes_for_level_multiplier=8,flusher_threads=8,compaction_readahead_size=2MB"
+          }
+        }
+      customize-failure-domain: true
+      ignore-device-errors: true
+      loglevel: 1
+      osd-devices: /dev/sdc /dev/sdd
+      osd-max-backfills: 1
+      osd-recovery-max-active: 1
+      sysctl: ""
+    constraints: arch=amd64
+    storage:
+      bluestore-db: loop,1024M
+      bluestore-wal: loop,1024M
+      cache-devices: loop,10240M
+      osd-devices: loop,1024M
+      osd-journals: loop,1024M
+    bindings:
+      "": alpha
+      cluster: alpha
+      mon: alpha
+      nrpe-external-master: alpha
+      public: alpha
+      secrets-storage: alpha
+  charm-manila-dellemc:
+    charm: local:charm-manila-dellemc-3
+    bindings:
+      "": alpha
+      juju-info: alpha
+      manila-plugin: alpha
+  cinder:
+    charm: cinder
+    channel: yoga/stable
+    revision: 569
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      block-device: None
+      config-flags: max_overflow=50,rpc_response_timeout=180,rpc_conn_pool_size=100,executor_thread_pool_size=128
+      glance-api-version: 2
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.2.207 172.28.1.207
+      worker-multiplier: 0.25
+    constraints: arch=amd64
+    storage:
+      block-devices: loop,10240M
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      backup-backend: pxe
+      ceph: storage-client
+      certificates: pxe
+      cinder-volume-service: pxe
+      cluster: pxe
+      ha: pxe
+      identity-service: pxe
+      image-service: pxe
+      internal: pxe
+      nrpe-external-master: pxe
+      public: public
+      shared-db: pxe
+      storage-backend: storage-client
+  cinder-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  dashboard-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  designate:
+    charm: designate
+    channel: yoga/stable
+    revision: 125
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      nameservers: 172.28.2.11 172.28.2.12 172.28.2.13
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.2.208 172.28.1.208
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      certificates: pxe
+      cluster: pxe
+      coordinator-memcached: pxe
+      dns-backend: pxe
+      dnsaas: pxe
+      ha: pxe
+      identity-service: pxe
+      internal: pxe
+      nrpe-external-master: pxe
+      public: public
+      shared-db: pxe
+  designate-bind:
+    charm: designate-bind
+    channel: yoga/stable
+    revision: 69
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      allowed_nets: 10.0.0.0/8;172.16.0.0/12;192.168.0.0/16
+      disable-dnssec-validation: true
+      forwarders: 172.28.2.11;172.28.2.12;172.28.2.13
+      use-internal-endpoints: true
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      certificates: pxe
+      cluster: pxe
+      dns-backend: pxe
+      dns-frontend: public
+  designate-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  easyrsa:
+    charm: easyrsa
+    channel: stable
+    revision: 30
+    resources:
+      easyrsa: 2
+    num_units: 1
+    to:
+    - lxd:0
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      client: pxe
+  etcd:
+    charm: etcd
+    channel: stable
+    revision: 722
+    resources:
+      core: 0
+      etcd: 3
+      snapshot: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      channel: latest/stable
+    constraints: arch=amd64
+    storage:
+      data: loop,1024M
+    bindings:
+      "": pxe
+      certificates: pxe
+      cluster: pxe
+      db: pxe
+      grafana: pxe
+      nrpe-external-master: pxe
+      prometheus: pxe
+      proxy: pxe
+  filebeat:
+    charm: filebeat
+    channel: stable
+    revision: 50
+    bindings:
+      "": alpha
+      beats-host: alpha
+      certificates: alpha
+      elasticsearch: alpha
+      kafka: alpha
+      logstash: alpha
+  glance:
+    charm: glance
+    channel: yoga/stable
+    revision: 557
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      api-config-flags: max_overflow=50,rpc_response_timeout=180,rpc_conn_pool_size=100,executor_thread_pool_size=128
+      bluestore-compression-algorithm: lz4
+      bluestore-compression-mode: aggressive
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.2.206 172.28.1.206
+      worker-multiplier: 0.125
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      ceph: storage-client
+      certificates: pxe
+      cinder-volume-service: pxe
+      cluster: pxe
+      ha: pxe
+      identity-service: pxe
+      image-service: pxe
+      internal: pxe
+      nrpe-external-master: pxe
+      object-store: pxe
+      public: public
+      shared-db: pxe
+      storage-backend: storage-client
+  glance-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  ha-cinder:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-dashboard:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-designate:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-glance:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-heat:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-keystone:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-manila:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-neutron:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-nova:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-placement:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  ha-vault:
+    charm: hacluster
+    channel: 2.4/stable
+    revision: 117
+    bindings:
+      "": alpha
+      ha: alpha
+      hanode: alpha
+      juju-info: alpha
+      nrpe-external-master: alpha
+      pacemaker-remote: alpha
+      peer-availability: alpha
+  heat:
+    charm: heat
+    channel: yoga/stable
+    revision: 514
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      config-flags: max_overflow=50,rpc_response_timeout=180,rpc_conn_pool_size=100,executor_thread_pool_size=128
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.2.205 172.28.1.205
+      worker-multiplier: 0.125
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      certificates: pxe
+      cluster: pxe
+      ha: pxe
+      heat-plugin-subordinate: pxe
+      identity-service: pxe
+      internal: pxe
+      nrpe-external-master: pxe
+      public: public
+      shared-db: pxe
+  heat-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  keystone:
+    charm: keystone
+    channel: yoga/stable
+    revision: 590
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      preferred-api-version: 3
+      region: med01
+      vip: 172.28.2.204 172.28.1.204
+      worker-multiplier: 0.25
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      certificates: pxe
+      cluster: pxe
+      domain-backend: pxe
+      ha: pxe
+      identity-admin: pxe
+      identity-credentials: pxe
+      identity-notifications: pxe
+      identity-service: pxe
+      internal: pxe
+      keystone-fid-service-provider: pxe
+      keystone-middleware: pxe
+      nrpe-external-master: pxe
+      public: public
+      shared-db: pxe
+      websso-trusted-dashboard: pxe
+  keystone-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  manila:
+    charm: manila
+    channel: yoga/stable
+    revision: 98
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      debug: false
+      default-share-backend: dell-emc
+      default-share-type: CIFS
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.2.210 172.28.1.210
+      worker-multiplier: 0.125
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: pxe
+      amqp: pxe
+      certificates: pxe
+      cluster: pxe
+      ha: pxe
+      identity-service: pxe
+      internal: pxe
+      manila-plugin: storage-student
+      neutron-plugin: pxe
+      nrpe-external-master: pxe
+      public: pxe
+      remote-manila-plugin: public
+      shared-db: pxe
+  manila-dellemc:
+    charm: local:manila-dellemc-11
+    options:
+      driver-handles-share-servers: false
+      emc-nas-login: manilaAdm
+      emc-nas-password: AdminSCT_2023
+      emc-nas-pool-name: Pool0
+      emc-ssl-cert-verify: false
+      management-address: 172.28.0.5
+      management-port: 443
+      unity-ethernet-ports: spa_la_iom_1_0
+      unity-shared-server: STG
+    bindings:
+      "": alpha
+      juju-info: alpha
+      manila-plugin: alpha
+  manila-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  memcached:
+    charm: memcached
+    channel: stable
+    revision: 38
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      size: 2048
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      cache: pxe
+      cluster: pxe
+      local-monitors: pxe
+      monitors: pxe
+      munin: pxe
+      nrpe-external-master: pxe
+  mysql-innodb-cluster:
+    charm: mysql-innodb-cluster
+    channel: 8.0/stable
+    revision: 30
+    resources:
+      mysql-shell: 0
+    num_units: 4
+    to:
+    - "0"
+    - "1"
+    - lxd:7
+    - "2"
+    options:
+      binlogs-expire-days: 7
+      binlogs-max-size: 500M
+      enable-binlogs: true
+      innodb-buffer-pool-size: 16G
+      innodb-io-capacity: 1000
+      max-connections: 5000
+      table-open-cache: 4096
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      certificates: pxe
+      cluster: pxe
+      coordinator: pxe
+      db-monitor: pxe
+      db-router: pxe
+      shared-db: pxe
+  neutron-api:
+    charm: neutron-api
+    channel: yoga/stable
+    revision: 542
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      allow-automatic-l3agent-failover: true
+      config-flags: max_overflow=50,rpc_response_timeout=180,rpc_conn_pool_size=100,executor_thread_pool_size=128
+      dhcp-agents-per-network: 2
+      dns-domain: med01.cloud.sena.edu.co
+      enable-ml2-dns: true
+      enable-ml2-port-security: true
+      flat-network-providers: extnet
+      l2-population: true
+      neutron-security-groups: true
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      rpc-response-timeout: 180
+      use-internal-endpoints: true
+      vip: 172.28.2.203 172.28.1.203
+      worker-multiplier: 0.25
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      certificates: pxe
+      cluster: pxe
+      etcd-proxy: pxe
+      external-dns: pxe
+      ha: pxe
+      identity-service: pxe
+      infoblox-neutron: pxe
+      internal: pxe
+      midonet: pxe
+      neutron-api: pxe
+      neutron-load-balancer: pxe
+      neutron-plugin-api: pxe
+      neutron-plugin-api-subordinate: pxe
+      nrpe-external-master: pxe
+      public: public
+      shared-db: pxe
+      vsd-rest-api: pxe
+  neutron-api-plugin-ovn:
+    charm: neutron-api-plugin-ovn
+    channel: stable
+    revision: 10
+    options:
+      dhcp-default-lease-time: 86400
+    bindings:
+      "": pxe
+      certificates: pxe
+      container: pxe
+      neutron-plugin: pxe
+      ovsdb-cms: pxe
+  neutron-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  nova-cloud-controller:
+    charm: nova-cloud-controller
+    channel: yoga/stable
+    revision: 634
+    resources:
+      policyd-override: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      config-flags: max_overflow=50,rpc_response_timeout=180,rpc_conn_pool_size=100,executor_thread_pool_size=128,heal_instance_info_cache_interval=120,default_reply_timeout=20,connection_retry_interval=5
+      console-access-port: 6082
+      console-access-protocol: spice
+      console-keymap: es-es
+      console-proxy-ip: 172.28.2.202
+      enable-serial-console: false
+      network-manager: Neutron
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-hostname: ""
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.1.202 172.28.2.202
+      worker-multiplier: 0.25
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      amqp-cell: pxe
+      certificates: pxe
+      cinder-volume-service: pxe
+      cloud-compute: pxe
+      cloud-controller: pxe
+      cluster: pxe
+      ha: pxe
+      identity-service: pxe
+      image-service: pxe
+      internal: pxe
+      memcache: pxe
+      neutron-api: pxe
+      nova-cell-api: pxe
+      nova-vmware: pxe
+      nrpe-external-master: pxe
+      placement: pxe
+      public: public
+      quantum-network-service: pxe
+      shared-db: pxe
+      shared-db-cell: pxe
+  nova-compute:
+    charm: nova-compute
+    channel: yoga/stable
+    revision: 611
+    num_units: 16
+    to:
+    - "3"
+    - "4"
+    - "13"
+    - "14"
+    - "15"
+    - "16"
+    - "18"
+    - "43"
+    - "44"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "10"
+    - "11"
+    options:
+      aa-profile-mode: complain
+      config-flags: default_ephemeral_format=ext4
+      customize-failure-domain: false
+      default-availability-zone: med01
+      enable-live-migration: true
+      enable-resize: true
+      libvirt-migration-network: 172.28.1.0/24
+      live-migration-permit-auto-converge: true
+      live-migration-permit-post-copy: true
+      migration-auth-type: ssh
+      os-internal-network: 172.28.1.0/24
+      reserved-host-memory: 65536
+      resume-guests-state-on-host-boot: true
+      sysctl: |-
+        { net.nf_conntrack_max: 1000000,
+          net.netfilter.nf_conntrack_buckets: 204800,
+          net.netfilter.nf_conntrack_max: 1000000,
+          net.netfilter.nf_conntrack_tcp_timeout_established: 7440,
+          net.core.rmem_max: 2147483647,
+          net.core.wmem_max: 2147483647,
+          net.core.optmem_max: 2147483647,
+          net.core.netdev_max_backlog: 300000,
+          net.core.default_qdisc: fq,
+          net.ipv4.tcp_rmem: 536870911 1073741823 2147483647,
+          net.ipv4.tcp_wmem: 536870911 1073741823 2147483647,
+          net.ipv4.neigh.default.gc_thresh1: 128,
+          net.ipv4.neigh.default.gc_thresh2: 28672,
+          net.ipv4.neigh.default.gc_thresh3: 32768,
+          net.ipv4.tcp_congestion_control: htcp,
+          net.ipv4.tcp_mtu_probing: 1,
+          net.ipv4.tcp_no_metrics_save: 1,
+          net.ipv4.tcp_low_latency: 1,
+          net.ipv4.tcp_adv_win_scale: 1,
+          net.ipv4.tcp_sack: 1,
+          kernel.pid_max: 2097152,
+          vm.max_map_count: 524288,
+          kernel.threads-max: 2097152,
+          vm.vfs_cache_pressure: 100,
+          vm.swappiness: 1,
+          kernel.msgmnb: 65536,
+          kernel.msgmax: 65536,
+          kernel.shmmax: 68719476736,
+          kernel.shmall: 4294967296,
+          fs.aio-max-nr: 262144
+        }
+      use-internal-endpoints: true
+      vcpu-pin-set: ^0,^1,^2,^3,4,^5,6,^7,8,^9,10,^11,12-47
+      virt-type: kvm
+      virtio-net-rx-queue-size: 1024
+      virtio-net-tx-queue-size: 1024
+    constraints: arch=amd64
+    storage:
+      ephemeral-device: loop,10240M
+    bindings:
+      "": pxe
+      amqp: pxe
+      ceph: storage-client
+      ceph-access: storage-client
+      cloud-compute: pxe
+      cloud-credentials: pxe
+      compute-peer: pxe
+      ephemeral-backend: storage-client
+      image-service: pxe
+      internal: pxe
+      ironic-api: pxe
+      lxd: pxe
+      migration: pxe
+      neutron-plugin: pxe
+      nova-ceilometer: pxe
+      nova-vgpu: pxe
+      nrpe-external-master: public
+      secrets-storage: pxe
+  nova-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+  ntp:
+    charm: ntp
+    channel: stable
+    revision: 50
+    options:
+      peers: pool.ntp.org
+      pools: ""
+    bindings:
+      "": alpha
+      juju-info: alpha
+      master: alpha
+      nrpe-external-master: alpha
+      ntp-peers: alpha
+      ntpmaster: alpha
+  openstack-dashboard:
+    charm: openstack-dashboard
+    channel: yoga/stable
+    revision: 561
+    resources:
+      policyd-override: 0
+      theme: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      cinder-backup: false
+      endpoint-type: publicURL,adminURL
+      enforce-ssl: true
+      neutron-network-l3ha: false
+      password-retrieve: true
+      secret: encryptcookiesuasnsd
+      vip: 172.28.2.201 172.28.1.201
+      webroot: /
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      application-dashboard: pxe
+      certificates: pxe
+      cluster: pxe
+      dashboard-plugin: pxe
+      ha: pxe
+      identity-service: pxe
+      nrpe-external-master: pxe
+      public: public
+      shared-db: pxe
+      website: public
+      websso-fid-service-provider: pxe
+      websso-trusted-dashboard: pxe
+  ovn-central:
+    charm: ovn-central
+    channel: 22.03/stable
+    revision: 57
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      certificates: pxe
+      coordinator: pxe
+      nrpe-external-master: pxe
+      ovsdb: pxe
+      ovsdb-cms: pxe
+      ovsdb-peer: pxe
+      ovsdb-server: pxe
+  ovn-chassis:
+    charm: ovn-chassis
+    channel: 22.03/stable
+    revision: 99
+    options:
+      bridge-interface-mappings: br-ex:bond2
+      ovn-bridge-mappings: extnet:br-ex
+    bindings:
+      "": pxe
+      amqp: pxe
+      certificates: pxe
+      data: pxe
+      juju-info: pxe
+      nova-compute: pxe
+      nrpe-external-master: pxe
+      ovsdb: pxe
+      ovsdb-subordinate: pxe
+  placement:
+    charm: placement
+    channel: yoga/stable
+    revision: 55
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      os-admin-network: 172.28.2.0/24
+      os-internal-network: 172.28.1.0/24
+      os-public-network: 172.28.2.0/24
+      region: med01
+      use-internal-endpoints: true
+      vip: 172.28.1.200 172.28.2.200
+      worker-multiplier: 0.125
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      admin: public
+      amqp: pxe
+      certificates: pxe
+      cluster: pxe
+      ha: pxe
+      identity-service: pxe
+      internal: pxe
+      placement: pxe
+      public: public
+      shared-db: pxe
+  placement-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": alpha
+      certificates: alpha
+      db-router: pxe
+      juju-info: alpha
+      shared-db: pxe
+  rabbitmq-server:
+    charm: rabbitmq-server
+    channel: 3.9/stable
+    revision: 154
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      access-network: 172.28.1.0/24
+      cluster-network: 172.28.1.0/24
+      cluster-partition-handling: pause_minority
+      management_plugin: true
+      min-cluster-size: 3
+      queue_thresholds: '[[\, \, 9500, 10500]]'
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      amqp: pxe
+      certificates: pxe
+      cluster: pxe
+      dashboards: pxe
+      ha: pxe
+      nrpe-external-master: pxe
+      prometheus-rules: pxe
+      scrape: pxe
+  stg-med01-ceph-hdd:
+    charm: cinder-ceph
+    channel: stable
+    revision: 483
+    bindings:
+      "": public
+      ceph: storage-client
+      ceph-access: storage-client
+      ceph-replication-device: public
+      juju-info: public
+      storage-backend: storage-client
+  stg-med01-ceph-ssd:
+    charm: cinder-ceph
+    channel: stable
+    revision: 483
+    options:
+      bluestore-compression-algorithm: lz4
+      bluestore-compression-mode: aggressive
+    bindings:
+      "": public
+      ceph: storage-client
+      ceph-access: storage-client
+      ceph-replication-device: public
+      juju-info: public
+      storage-backend: storage-client
+  sysconfig:
+    charm: sysconfig
+    channel: stable
+    revision: 15
+    options:
+      governor: performance
+      grub-config-flags: GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT transparent_hugepage=never
+      hugepages: "163840"
+      isolcpus: 4,6,8,10,12-47
+    bindings:
+      "": alpha
+      juju-info: alpha
+  telegraf:
+    charm: telegraf
+    channel: stable
+    revision: 62
+    bindings:
+      "": pxe
+      amqp: pxe
+      apache: pxe
+      dashboards: pxe
+      elasticsearch: pxe
+      exec: pxe
+      haproxy: pxe
+      influxdb-api: pxe
+      juju-info: pxe
+      memcached: pxe
+      mongodb: pxe
+      mysql: pxe
+      mysql-monitor: pxe
+      nrpe-external-master: pxe
+      postfix: pxe
+      postgresql: pxe
+      prometheus-client: pxe
+      prometheus-rules: pxe
+      redis: pxe
+      sentry: pxe
+  vault:
+    charm: vault
+    channel: 1.7/stable
+    revision: 82
+    resources:
+      core: 0
+      vault: 0
+    num_units: 3
+    to:
+    - lxd:0
+    - lxd:1
+    - lxd:2
+    options:
+      default-ca-ttl: 4320h
+      default-ttl: 4290h
+      max-ttl: 4300h
+      vip: 172.28.1.209
+    constraints: arch=amd64
+    bindings:
+      "": pxe
+      access: pxe
+      certificates: pxe
+      cluster: pxe
+      db: pxe
+      etcd: pxe
+      external: pxe
+      ha: pxe
+      lb-provider: pxe
+      nrpe-external-master: pxe
+      secrets: pxe
+      shared-db: pxe
+  vault-mysql-router:
+    charm: mysql-router
+    channel: 8.0/stable
+    revision: 35
+    bindings:
+      "": pxe
+      certificates: pxe
+      db-router: pxe
+      juju-info: pxe
+      shared-db: pxe
+machines:
+  "0":
+    constraints: tags=controlplane
+  "1":
+    constraints: tags=controlplane
+  "2":
+    constraints: tags=controlplane
+  "3":
+    constraints: tags=compute
+  "4":
+    constraints: tags=compute
+  "5":
+    constraints: tags=compute
+  "6":
+    constraints: arch=amd64
+  "7":
+    constraints: arch=amd64
+  "8":
+    constraints: arch=amd64
+  "9":
+    constraints: arch=amd64
+  "10":
+    constraints: arch=amd64
+  "11":
+    constraints: arch=amd64
+  "13":
+    constraints: arch=amd64
+  "14":
+    constraints: arch=amd64
+  "15":
+    constraints: arch=amd64
+  "16":
+    constraints: arch=amd64
+  "18":
+    constraints: arch=amd64
+  "43": {}
+  "44": {}
+relations:
+- - vault-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - vault:shared-db
+  - vault-mysql-router:shared-db
+- - vault:etcd
+  - etcd:db
+- - easyrsa:client
+  - etcd:certificates
+- - cinder:shared-db
+  - cinder-mysql-router:shared-db
+- - cinder:storage-backend
+  - stg-med01-ceph-ssd:storage-backend
+- - cinder:storage-backend
+  - stg-med01-ceph-hdd:storage-backend
+- - cinder:ha
+  - ha-cinder:ha
+- - glance:shared-db
+  - glance-mysql-router:shared-db
+- - glance:ha
+  - ha-glance:ha
+- - cinder:amqp
+  - rabbitmq-server:amqp
+- - cinder-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - glance:amqp
+  - rabbitmq-server:amqp
+- - glance-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - designate-bind:dns-backend
+  - designate:dns-backend
+- - designate:shared-db
+  - designate-mysql-router:shared-db
+- - designate-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - designate:identity-service
+  - keystone:identity-service
+- - designate:amqp
+  - rabbitmq-server:amqp
+- - designate:ha
+  - ha-designate:ha
+- - memcached:cache
+  - designate:coordinator-memcached
+- - ha-vault:ha
+  - vault:ha
+- - placement:placement
+  - nova-cloud-controller:placement
+- - placement:shared-db
+  - placement-mysql-router:shared-db
+- - nova-cloud-controller:shared-db
+  - nova-mysql-router:shared-db
+- - nova-cloud-controller:ha
+  - ha-nova:ha
+- - placement:ha
+  - ha-placement:ha
+- - nova-compute:cloud-compute
+  - nova-cloud-controller:cloud-compute
+- - placement:amqp
+  - rabbitmq-server:amqp
+- - placement-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - memcached:cache
+  - nova-cloud-controller:memcache
+- - nova-cloud-controller:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:image-service
+  - glance:image-service
+- - nova-cloud-controller:cinder-volume-service
+  - cinder:cinder-volume-service
+- - nova-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - nova-compute:amqp
+  - rabbitmq-server:amqp
+- - nova-compute:image-service
+  - glance:image-service
+- - nova-compute:secrets-storage
+  - vault:secrets
+- - neutron-api:shared-db
+  - neutron-mysql-router:shared-db
+- - neutron-api-plugin-ovn:neutron-plugin
+  - neutron-api:neutron-plugin-api-subordinate
+- - ovn-central:ovsdb-cms
+  - neutron-api-plugin-ovn:ovsdb-cms
+- - ha-neutron:ha
+  - neutron-api:ha
+- - keystone:shared-db
+  - keystone-mysql-router:shared-db
+- - keystone:ha
+  - ha-keystone:ha
+- - neutron-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - neutron-api:neutron-api
+  - nova-cloud-controller:neutron-api
+- - keystone-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - neutron-api:amqp
+  - rabbitmq-server:amqp
+- - neutron-api:identity-service
+  - keystone:identity-service
+- - keystone-mysql-router:juju-info
+  - keystone:juju-info
+- - cinder:identity-service
+  - keystone:identity-service
+- - glance:identity-service
+  - keystone:identity-service
+- - nova-cloud-controller:identity-service
+  - keystone:identity-service
+- - vault:certificates
+  - neutron-api-plugin-ovn:certificates
+- - ovn-central:certificates
+  - vault:certificates
+- - placement:identity-service
+  - keystone:identity-service
+- - ovn-chassis:nova-compute
+  - nova-compute:neutron-plugin
+- - ovn-chassis:ovsdb
+  - ovn-central:ovsdb
+- - ovn-chassis:certificates
+  - vault:certificates
+- - heat:shared-db
+  - heat-mysql-router:shared-db
+- - heat:ha
+  - ha-heat:ha
+- - heat:identity-service
+  - keystone:identity-service
+- - heat:amqp
+  - rabbitmq-server:amqp
+- - heat-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - openstack-dashboard:shared-db
+  - dashboard-mysql-router:shared-db
+- - openstack-dashboard:identity-service
+  - keystone:identity-service
+- - dashboard-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - openstack-dashboard:ha
+  - ha-dashboard:ha
+- - openstack-dashboard:certificates
+  - vault:certificates
+- - nova-compute:juju-info
+  - sysconfig:juju-info
+- - nova-compute:juju-info
+  - telegraf:juju-info
+- - rabbitmq-server:juju-info
+  - telegraf:juju-info
+- - rabbitmq-server:amqp
+  - telegraf:amqp
+- - mysql-innodb-cluster:juju-info
+  - telegraf:juju-info
+- - mysql-innodb-cluster:db-monitor
+  - telegraf:mysql-monitor
+- - ntp:juju-info
+  - nova-compute:juju-info
+- - ntp:juju-info
+  - mysql-innodb-cluster:juju-info
+- - ceph-osd-ssd:mon
+  - ceph-mon:osd
+- - ceph-mon:osd
+  - ceph-osd-hdd-sda:mon
+- - ceph-mon:osd
+  - ceph-osd-hdd-sdb:mon
+- - stg-med01-ceph-hdd:ceph
+  - ceph-mon:client
+- - stg-med01-ceph-ssd:ceph
+  - ceph-mon:client
+- - stg-med01-ceph-hdd:ceph-access
+  - nova-compute:ceph-access
+- - stg-med01-ceph-ssd:ceph-access
+  - nova-compute:ceph-access
+- - manila-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - glance:ceph
+  - ceph-mon:client
+- - glance:certificates
+  - vault:certificates
+- - neutron-api:certificates
+  - vault:certificates
+- - cinder:certificates
+  - vault:certificates
+- - keystone:certificates
+  - vault:certificates
+- - manila:certificates
+  - vault:certificates
+- - manila:amqp
+  - rabbitmq-server:amqp
+- - manila:identity-service
+  - keystone:identity-service
+- - manila:ha
+  - ha-manila:ha
+- - manila:shared-db
+  - manila-mysql-router:shared-db
+- - designate:certificates
+  - vault:certificates
+- - placement:certificates
+  - vault:certificates
+- - heat:certificates
+  - vault:certificates
+- - vault:certificates
+  - nova-cloud-controller:certificates
+- - manila:manila-plugin
+  - manila-dellemc:manila-plugin
+- - mysql-innodb-cluster:juju-info
+  - filebeat:beats-host
